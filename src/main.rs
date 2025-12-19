@@ -55,8 +55,14 @@ async fn main() -> Result<()> {
     // Create a provider with the wallet for only Bob (not Alice).
     let provider = ProviderBuilder::new().wallet(bob.clone()).connect_http(rpc_url);
 
-    // Deploy the contract Alice will authorize.
-    let contract = Delegate::deploy(&provider).await?;
+    // // Deploy the contract Alice will authorize.
+    // let contract = Delegate::deploy(&provider).await?;
+
+    // 方式2: 直接使用地址字符串
+    let contract_address = Address::from_str("0x6ee338fe36c497aaa76b3a75a24c05f498b37030")?;
+
+    // 创建已部署的合约实例
+    let contract = Delegate::new(contract_address, &provider);
 
     // Get chain ID from the provider
     let chain_id = provider.get_chain_id().await?;
