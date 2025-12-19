@@ -41,13 +41,13 @@ sol!(
 #[tokio::main]
 async fn main() -> Result<()> {
     // Connect to localhost node (default: http://localhost:8545)
-    let rpc_url = reqwest::Url::parse("http://localhost:8545")?;
+    let rpc_url = reqwest::Url::parse("https://sepolia.infura.io/v3/97d0b8363e1f4e8098afaaa438753e9a")?;
     
     // Create two users, Alice and Bob.
     // Alice will sign the authorization and Bob will send the transaction.
     // Using common test private keys (replace with your own if needed)
-    let alice_key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"; // Anvil default key 0
-    let bob_key = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"; // Anvil default key 1
+    let alice_key = "933d34fc71cf5b30907b4904c71cfc40d485d8e66b7a1a1936e1185578f3558f"; // Anvil default key 0
+    let bob_key = "5eee9528d33beed8fb1cb175c212d32f1ccac11aa9df0bb9a45025b49a8edcc3"; // Anvil default key 1
     
     let alice: PrivateKeySigner = PrivateKeySigner::from_str(alice_key)?;
     let bob: PrivateKeySigner = PrivateKeySigner::from_str(bob_key)?;
