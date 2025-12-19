@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Script} from "forge-std/Script.sol";
-import {Delegate} from "../src/delegate.sol";
+import {Delegate} from "../src/contracts/delegate.sol";
 
 contract DelegateScript is Script {
     Delegate public delegate;

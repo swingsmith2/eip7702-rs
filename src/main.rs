@@ -3,7 +3,7 @@
 use alloy::{
     eips::eip7702::Authorization,
     network::{TransactionBuilder, TransactionBuilder7702},
-    primitives::U256,
+    primitives::{Address as AlloyAddress, U256},
     providers::{Provider, ProviderBuilder},
     rpc::types::TransactionRequest,
     signers::{local::PrivateKeySigner, SignerSync},
@@ -11,6 +11,7 @@ use alloy::{
 };
 use eyre::Result;
 use std::str::FromStr;
+use dotenvy::dotenv;
 
 // Load contract from compiled JSON artifact
 // Extract bytecode from: out/delegate.sol/Delegate.json
@@ -40,17 +41,18 @@ sol!(
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Connect to localhost node (default: http://localhost:8545)
-    let rpc_url = reqwest::Url::parse("https://sepolia.infura.io/v3/97d0b8363e1f4e8098afaaa438753e9a")?;
+    dotenv().ok();
+    // 从环境变量读取 RPC_URL
+    let rpc_url = reqwest::Url::parse(&std::env::var("RPC_URL")?)?;
     
     // Create two users, Alice and Bob.
     // Alice will sign the authorization and Bob will send the transaction.
-    // Using common test private keys (replace with your own if needed)
-    let alice_key = "933d34fc71cf5b30907b4904c71cfc40d485d8e66b7a1a1936e1185578f3558f"; // Anvil default key 0
-    let bob_key = "5eee9528d33beed8fb1cb175c212d32f1ccac11aa9df0bb9a45025b49a8edcc3"; // Anvil default key 1
+    // 从环境变量读取 Alice 和 Bob 的私钥
+    let alice_key = std::env::var("ALICE_PRIVATE_KEY")?;
+    let bob_key = std::env::var("BOB_PRIVATE_KEY")?;
     
-    let alice: PrivateKeySigner = PrivateKeySigner::from_str(alice_key)?;
-    let bob: PrivateKeySigner = PrivateKeySigner::from_str(bob_key)?;
+    let alice: PrivateKeySigner = PrivateKeySigner::from_str(&alice_key)?;
+    let bob: PrivateKeySigner = PrivateKeySigner::from_str(&bob_key)?;
 
     // Create a provider with the wallet for only Bob (not Alice).
     let provider = ProviderBuilder::new().wallet(bob.clone()).connect_http(rpc_url);
@@ -58,8 +60,8 @@ async fn main() -> Result<()> {
     // // Deploy the contract Alice will authorize.
     // let contract = Delegate::deploy(&provider).await?;
 
-    // 方式2: 直接使用地址字符串
-    let contract_address = Address::from_str("0x6ee338fe36c497aaa76b3a75a24c05f498b37030")?;
+    // 从环境变量读取已部署的合约地址
+    let contract_address = AlloyAddress::from_str(&std::env::var("DELEGATE_CONTRACT_ADDRESS")?)?;
 
     // 创建已部署的合约实例
     let contract = Delegate::new(contract_address, &provider);
